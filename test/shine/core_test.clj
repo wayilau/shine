@@ -1,6 +1,6 @@
 (ns shine.core-test
   (:require [clojure.test :refer :all]
-            [mylaintests.core :refer :all]))
+            [shine.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
