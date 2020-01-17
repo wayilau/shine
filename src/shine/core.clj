@@ -10,6 +10,14 @@
 (def workGroup (NioEventLoopGroup. 1))
 (def b (ServerBootstrap.))
 
+(def handler
+  "Implement a handler extends ChannelHandler
+  process the message custom."
+  (proxy [SimpleChannelInboundHandler] []
+    (channelRead [ctx message]
+      (.writeAndFlush ctx message)
+      )))
+
 (defn init
   "Init a tcp server with port"
   [port]
@@ -17,10 +25,12 @@
   (.channel b (class (NioServerSocketChannel.)))
   (.childHandler b (proxy [ChannelInitializer] []
                      (initChannel [ch]
-                       (.addLast (.pipeline ch) (proxy [SimpleChannelInboundHandler] []
-                                                  (channelRead [ctx msg]
-                                                    (println "get msg" (str msg))))))))
+                       (.addLast (.pipeline ch) handler)
+                       )))
   (.option b ChannelOption/SO_BACKLOG (int 128))
   (.childOption b ChannelOption/SO_KEEPALIVE true)
-  (.sync (.closeFuture (.channel (.sync (.bind b port)))))
+  ;(.sync (.closeFuture (.channel (.sync (.bind b port)))))
+  (let [f] (.bind b port)
+           (.addListener f))
   )
+
