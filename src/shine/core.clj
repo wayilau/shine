@@ -1,36 +1,12 @@
 (ns shine.core
-  (:gen-class)
-  (:import (io.netty.bootstrap ServerBootstrap)
-           (io.netty.channel.nio NioEventLoopGroup)
-           (io.netty.channel.socket.nio NioServerSocketChannel)
-           (io.netty.channel ChannelInitializer ChannelOption SimpleChannelInboundHandler)))
+  (:import (java.util Scanner)))
 
-
-(def bossGroup (NioEventLoopGroup.))
-(def workGroup (NioEventLoopGroup. 1))
-(def b (ServerBootstrap.))
-
-(def handler
-  "Implement a handler extends ChannelHandler
-  process the message custom."
-  (proxy [SimpleChannelInboundHandler] []
-    (channelRead [ctx message]
-      (.writeAndFlush ctx message)
-      )))
-
-(defn init
-  "Init a tcp server with port"
-  [port]
-  (.group b bossGroup workGroup)
-  (.channel b (class (NioServerSocketChannel.)))
-  (.childHandler b (proxy [ChannelInitializer] []
-                     (initChannel [ch]
-                       (.addLast (.pipeline ch) handler)
-                       )))
-  (.option b ChannelOption/SO_BACKLOG (int 128))
-  (.childOption b ChannelOption/SO_KEEPALIVE true)
-  ;(.sync (.closeFuture (.channel (.sync (.bind b port)))))
-  (let [f] (.bind b port)
-           (.addListener f))
+(defn call
+  "This func send message to server."
+  [ch]
+  (let [input (Scanner. (System/in))]
+    (loop [value (.next input)]
+      (if (not= value "exit")
+        (.writeAndFlush ch value)
+        (recur (.next input)))))
   )
-
