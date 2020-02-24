@@ -6,8 +6,11 @@
 (defn loadFile
   "Read yaml file."
   []
+  (println "test loadFile")
   (yaml/from-file "config.yml"))
 
 (defn -main
+  "test"
   [& args]
-  (println (loadFile)))
+  (println "hello")
+  (loadFile))

@@ -7,6 +7,6 @@
                  [io.netty/netty-all "4.1.42.Final"]
                  [cheshire "5.9.0"]
                  ["io.forward/yaml" "1.0.9"]]
-  :main ^:skip-aot shine.core
+  ;:main ^:skip-aot shine.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
