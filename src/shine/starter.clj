@@ -1,5 +1,5 @@
 (ns shine.starter
-  (:require [shine.server :as server])
+  (:require [net.server :as server])
   )
 
 (defn -main
@@ -7,6 +7,6 @@
   a tcp or udp server to listen on 3000 default. Server accepts
   connection from private network, and response directly."
   [& args]
-  (server/server 3000)
-  ()
+  (println "start server")
+  (server/start 3000)
   )
