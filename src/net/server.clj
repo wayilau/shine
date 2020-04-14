@@ -2,13 +2,15 @@
   (:import (io.netty.bootstrap ServerBootstrap)
            (io.netty.channel.nio NioEventLoopGroup)
            (io.netty.channel.socket.nio NioServerSocketChannel)
-           (io.netty.channel ChannelInitializer ChannelOption ChannelPipeline ChannelFuture SimpleChannelInboundHandler)))
+           (io.netty.channel ChannelInitializer ChannelOption ChannelPipeline ChannelFuture SimpleChannelInboundHandler ChannelHandler ChannelInboundHandlerAdapter)))
 
-(def handler
+(defn ^ChannelHandler inbound-handler
   "Implement a handler extends ChannelHandler
   process the message custom."
-  (proxy [SimpleChannelInboundHandler] []
-    (channelRead [ctx message]
+  []
+  (proxy [ChannelInboundHandlerAdapter] []
+    (channelRead [ctx ^String message]
+      (println "get message" message)
       (.writeAndFlush ctx message)
       )))
 
@@ -21,12 +23,12 @@
         ^ServerBootstrap b (ServerBootstrap.)
         handler1 (proxy [ChannelInitializer] []
                    (initChannel [ch]
-                     (let [p ^ChannelPipeline (.pipeline ch)]
-                       (.addLast p handler))))]
+                     (let [pipeline (.pipeline ch)]
+                       (.addLast pipeline (inbound-handler)))))]
     (doto b
       (.group bossGroup workerGroup)
       (.channel (class (NioServerSocketChannel.)))
-      ;(.option ChannelOption/SO_BACKLOG 64)
+      (.option ChannelOption/SO_BACKLOG (int 128))
       (.childOption ChannelOption/SO_KEEPALIVE true)
       (.childHandler handler1)
       )
