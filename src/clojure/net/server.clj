@@ -3,7 +3,6 @@
            (io.netty.channel.nio NioEventLoopGroup)
            (io.netty.channel.socket.nio NioServerSocketChannel)
            (io.netty.channel ChannelInitializer ChannelOption ChannelPipeline ChannelFuture SimpleChannelInboundHandler ChannelHandler ChannelInboundHandlerAdapter)
-           (handler StringHandler)
            (io.netty.handler.codec.string StringDecoder)))
 
 (defn ^ChannelHandler inbound-handler
@@ -12,7 +11,7 @@
   []
   (proxy [SimpleChannelInboundHandler] []
     (channelRead0 [ctx ^String message]
-      (println "get message" (.toString message))
+      (println "get message from client" (.toString message))
       (.writeAndFlush ctx message)
       )))
 
