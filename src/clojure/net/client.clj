@@ -38,6 +38,7 @@
                   (initChannel [ch]
                     (let [pipeline (.pipeline ch)]
                       (.addLast pipeline "stringencoder" (StringEncoder.))
+                      (.addLast pipeline "stringdecoder" (StringDecoder.))
                       (.addLast pipeline "inhandler" (in-handler))
                       ;(.addLast pipeline "outhandler" (out-handler))
                       )))]
@@ -50,14 +51,13 @@
     (let [^ChannelFuture f (.connect b host port)]
       (.sync f)
       (let [scan (Scanner. System/in)
-            line (.nextLine scan)
             channel (.channel f)]
+        (def line (.nextLine scan))
         (while (not (nil? line))
           (do
-            ;(println (str line))
-            (.writeAndFlush channel line))
-          (def line (.nextLine scan))
-          ))
+            (.writeAndFlush channel line)
+            (def line (.nextLine scan))
+            )))
       (.sync (.closeFuture (.channel f)))))
   )
 

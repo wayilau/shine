@@ -3,7 +3,7 @@
            (io.netty.channel.nio NioEventLoopGroup)
            (io.netty.channel.socket.nio NioServerSocketChannel)
            (io.netty.channel ChannelInitializer ChannelOption ChannelPipeline ChannelFuture SimpleChannelInboundHandler ChannelHandler ChannelInboundHandlerAdapter)
-           (io.netty.handler.codec.string StringDecoder)))
+           (io.netty.handler.codec.string StringDecoder StringEncoder)))
 
 (defn ^ChannelHandler inbound-handler
   "Implement a handler extends ChannelHandler
@@ -12,7 +12,7 @@
   (proxy [SimpleChannelInboundHandler] []
     (channelRead0 [ctx ^String message]
       (println "get message from client" (.toString message))
-      (.writeAndFlush ctx message)
+      (.writeAndFlush ctx (.toString message))
       )))
 
 
@@ -25,6 +25,7 @@
         handler1 (proxy [ChannelInitializer] []
                    (initChannel [ch]
                      (let [pipeline (.pipeline ch)]
+                       (.addLast pipeline "stringencoder" (StringEncoder.))
                        (.addLast pipeline "stringdecoder" (StringDecoder.))
                        (.addLast pipeline "selfhandler" (inbound-handler)))))]
     (doto b
