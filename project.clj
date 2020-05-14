@@ -8,7 +8,9 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [io.netty/netty-all "4.1.42.Final"]
                  [cheshire "5.9.0"]
-                 ["io.forward/yaml" "1.0.9"]]
+                 ["io.forward/yaml" "1.0.9"]
+                 ["mysql/mysql-connector-java" "8.0.19"]
+                 ]
   ;:main ^:skip-aot shine.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
