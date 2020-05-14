@@ -14,16 +14,16 @@
   (proxy [SimpleChannelInboundHandler] []
     (channelRead0 [ctx ^String message]
       (println "get message from server" (.toString message)))
-    (channelRegistered [ctx]
+    (channelActive [ctx]
       (println "connected to server.")
-      ;(let [scan (Scanner. System/in)
-      ;      line (.nextLine scan)]
-      ;  (while (not (nil? line))
-      ;    (do
-      ;      ;(println (str line))
-      ;      (.writeAndFlush ctx line))
-      ;    (def line (.nextLine scan))
-      ;    ))
+      (let [scan (Scanner. System/in)
+            channel (.channel ctx)]
+        (def line (.nextLine scan))
+        (while (not (nil? line))
+          (do
+            (.writeAndFlush channel line)
+            (def line (.nextLine scan))
+            )))
       )
 
     ))
@@ -49,15 +49,6 @@
       (.handler handler))
 
     (let [^ChannelFuture f (.connect b host port)]
-      (.sync f)
-      (let [scan (Scanner. System/in)
-            channel (.channel f)]
-        (def line (.nextLine scan))
-        (while (not (nil? line))
-          (do
-            (.writeAndFlush channel line)
-            (def line (.nextLine scan))
-            )))
       (.sync (.closeFuture (.channel f)))))
   )
 

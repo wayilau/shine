@@ -11,7 +11,7 @@
   []
   (proxy [SimpleChannelInboundHandler] []
     (channelRead0 [ctx ^String message]
-      (println "get message from client" (.toString message))
+      (println "get message from client:" (.toString message))
       (.writeAndFlush ctx (.toString message))
       )))
 
