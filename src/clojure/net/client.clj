@@ -7,8 +7,6 @@
            (java.util Scanner)))
 
 
-(def not-nil? (complement nil?))
-
 (defn ^ChannelHandler in-handler
   "Implement a handler extends ChannelHandler
   process the message custom."
@@ -21,12 +19,14 @@
       (let [scan (Scanner. System/in)
             channel (.channel ctx)]
         (def line (.nextLine scan))
-
-        (while (not-nil? line)
+        (while (not (nil? line))
           (do
             (.writeAndFlush channel line)
-            (def line (.nextLine scan))))))))
+            (def line (.nextLine scan))
+            )))
+      )
 
+    ))
 
 
 (defn client
@@ -49,8 +49,8 @@
       (.handler handler))
 
     (let [^ChannelFuture f (.connect b host port)]
-      (.sync (.closeFuture (.channel f))))))
-
+      (.sync (.closeFuture (.channel f)))))
+  )
 
 (defn -main
   "client main"

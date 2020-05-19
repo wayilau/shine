@@ -10,11 +10,7 @@
                  [cheshire "5.9.0"]
                  ["io.forward/yaml" "1.0.9"]
                  ["mysql/mysql-connector-java" "8.0.19"]
-                 [ring "1.8.1"]
-                 [compojure "1.6.1"]
                  ]
   ;:main ^:skip-aot shine.core
   :target-path "target/%s"
-  :plugins [[lein-ring "0.7.1"]]
-  :ring {:handler http.server/app}
   :profiles {:uberjar {:aot :all}})
