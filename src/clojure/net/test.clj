@@ -6,7 +6,5 @@
 
 (defn -main
   [& args]
-  (netty/addHandler (StringEncoder.))
-  (netty/addHandler (StringDecoder.))
-  (netty/addHandler (server/inbound-handler))
-  (netty/run-netty {:port 3000}))
+  (netty/run-netty {:port     3000
+                    :handlers [(StringEncoder.) (StringDecoder.) (server/inbound-handler)]}))

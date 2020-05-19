@@ -6,29 +6,29 @@
     (io.netty.channel.nio NioEventLoopGroup)))
 
 (def boot (ServerBootstrap.))
-(def handlers [])
-
-(defn addHandler
-  [handler]
-  (conj handlers handler))
 
 (defn- ^ChannelHandler init-channel
   "give the pipeline to user,can modify the channelhandler at runtime."
-  []
+  [handlers]
   (proxy [ChannelInitializer] []
     (initChannel [ch]
-      (let [pipeline (.pipeline ch)]
-        (.addLast pipeline handlers))))
+      (let [^ChannelPipeline pipeline (.pipeline ch)]
+        (doseq [index (range (count handlers))]
+          (println index)
+          (.addLast pipeline (str "handler" index) (get handlers index))))))
   )
 
 ;run a netty server
 (defn run-netty
-  "new a netty server
-  :port use to listen
-  :bossgroup
-  :workergroup
+  "build a netty server easily from function, help us not need use netty every time
+  just use this function is enough.
+
+  :port which port listening on
+  :bossgroup  if not provided, default will be used
+  :workergroup if not provided, default will be used
   :backlog
   :keepalive
+  :handlers handlers for channnel execute, contains self created handler.
   :channelInitializer channel init"
   [options]
   (doto boot
@@ -36,7 +36,7 @@
     (.channel (class (NioServerSocketChannel.)))
     (.option ChannelOption/SO_BACKLOG (:backlog options (int 128)))
     (.childOption ChannelOption/SO_KEEPALIVE (:keepalive options true))
-    (.childHandler (init-channel)))
+    (.childHandler (init-channel (:handlers options))))
 
   (when-let [^ChannelFuture f (.bind boot (:port options))]
     (println (str "server listenning on :" (:port options)))
