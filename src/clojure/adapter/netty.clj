@@ -2,12 +2,19 @@
   (:import
     (io.netty.bootstrap ServerBootstrap)
     (io.netty.channel.socket.nio NioServerSocketChannel)
-    (io.netty.channel ChannelFuture ChannelOption SimpleChannelInboundHandler ChannelPipeline ChannelInitializer ChannelHandler)
+    (io.netty.channel ChannelFuture ChannelOption ChannelPipeline ChannelInitializer ChannelHandler ChannelHandlerContext ChannelInboundHandlerAdapter)
     (io.netty.channel.nio NioEventLoopGroup)))
 
 (def boot (ServerBootstrap.))
 
-(defn- ^ChannelHandler init-channel
+(defn ^ChannelHandler new-handler
+  "build handler from this func."
+  [f]
+  (proxy [ChannelInboundHandlerAdapter] []
+    (channelRead [^ChannelHandlerContext ctx ^Object message]
+      (f ctx message))))
+
+(defn- ^ChannelInitializer init-channel
   "give the pipeline to user,can modify the channelhandler at runtime."
   [handlers]
   (proxy [ChannelInitializer] []

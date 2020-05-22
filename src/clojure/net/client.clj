@@ -1,10 +1,11 @@
 (ns net.client
-  (:import (io.netty.channel.nio NioEventLoop NioEventLoopGroup)
+  (:import (io.netty.channel.nio NioEventLoopGroup)
            (io.netty.bootstrap Bootstrap)
            (io.netty.channel.socket.nio NioSocketChannel)
-           (io.netty.channel ChannelOption ChannelInitializer SimpleChannelInboundHandler ChannelHandler ChannelOutboundHandlerAdapter ChannelOutboundHandler ChannelFuture)
+           (io.netty.channel ChannelOption ChannelInitializer SimpleChannelInboundHandler ChannelHandler ChannelFuture)
            (io.netty.handler.codec.string StringDecoder StringEncoder)
-           (java.util Scanner)))
+           (java.util Scanner)
+           (java.util.concurrent Executors)))
 
 
 (def not-nil? (complement nil?))
@@ -18,14 +19,16 @@
       (println "get message from server" (.toString message)))
     (channelActive [ctx]
       (println "connected to server.")
-      (let [scan (Scanner. System/in)
-            channel (.channel ctx)]
-        (def line (.nextLine scan))
 
-        (while (not-nil? line)
-          (do
-            (.writeAndFlush channel line)
-            (def line (.nextLine scan))))))))
+      (let [scan (Scanner. System/in)
+            channel (.channel ctx)
+            pool (Executors/newFixedThreadPool 1)]
+        (.submit pool ^Runnable (fn []
+                                  (def line (.nextLine scan))
+                                  (while (not-nil? line)
+                                    (do
+                                      (.writeAndFlush channel line)
+                                      (def line (.nextLine scan))))))))))
 
 
 
@@ -40,7 +43,6 @@
                       (.addLast pipeline "stringencoder" (StringEncoder.))
                       (.addLast pipeline "stringdecoder" (StringDecoder.))
                       (.addLast pipeline "inhandler" (in-handler))
-                      ;(.addLast pipeline "outhandler" (out-handler))
                       )))]
     (doto b
       (.group group)
