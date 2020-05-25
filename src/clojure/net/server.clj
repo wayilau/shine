@@ -7,7 +7,7 @@
 
 (defn -main
   [& args]
-  (netty/run-netty {:port     3000
-                    :handlers (vector (StringEncoder.) (StringDecoder.) (netty/new-handler (fn [^ChannelHandlerContext ctx ^String message]
-                                                                                             (println (str "get message from client:" message))
-                                                                                             (.writeAndFlush ctx message))))}))
+  (netty/netty-server {:port  3000
+                    :handlers [(StringEncoder.) (StringDecoder.) (netty/new-handler (fn [^ChannelHandlerContext ctx ^String message]
+                                                                                      (println (str "get message from client:" message))
+                                                                                      (.writeAndFlush ctx message)))]}))

@@ -3,14 +3,16 @@
   (:require [yaml.core :as yaml]))
 
 
+;(yaml/from-file "/Users/francis/workspc/shine/resources/config.yml")
+
+
 (defn loadFile
   "Read yaml file."
   []
-  (println "test loadFile")
-  (yaml/from-file "config.yml"))
+  (yaml/from-file "/Users/francis/workspc/shine/resources/config.yml"))
 
 (defn -main
   "test"
   [& args]
-  (println "hello")
-  (loadFile))
+  (when let)
+  (println (:addr (loadFile))))

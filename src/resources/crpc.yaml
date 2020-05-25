@@ -1,0 +1,7 @@
+crp:
+  address: localhost
+  port: 3000
+
+test:
+  address: localhost
+  port: 4000

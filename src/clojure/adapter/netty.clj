@@ -1,11 +1,12 @@
 (ns adapter.netty
   (:import
-    (io.netty.bootstrap ServerBootstrap)
-    (io.netty.channel.socket.nio NioServerSocketChannel)
+    (io.netty.bootstrap ServerBootstrap Bootstrap)
+    (io.netty.channel.socket.nio NioServerSocketChannel NioSocketChannel)
     (io.netty.channel ChannelFuture ChannelOption ChannelPipeline ChannelInitializer ChannelHandler ChannelHandlerContext ChannelInboundHandlerAdapter)
     (io.netty.channel.nio NioEventLoopGroup)))
 
 (def boot (ServerBootstrap.))
+(def b (Bootstrap.))
 
 (defn ^ChannelHandler new-handler
   "build handler from this func."
@@ -26,7 +27,7 @@
   )
 
 ;run a netty server
-(defn run-netty
+(defn netty-server
   "build a netty server easily from function, help us not need use netty every time
   just use this function is enough.
 
@@ -47,4 +48,23 @@
 
   (when-let [^ChannelFuture f (.bind boot (:port options))]
     (println (str "server listenning on :" (:port options)))
+    (.sync (.closeFuture (.channel f)))))
+
+(defn netty-client
+  "this fn used to build a netty client easily from func, help us not need use netty lib every time
+  just use this func is enough.
+  :addr remote address to connect to, default: localhost
+  :port remote server port to connect to"
+  [options]
+  (doto b
+    (.group (:group options (NioEventLoopGroup.)))
+    (.channel (:channel options (class (NioSocketChannel.))))
+    (.option (:option options (ChannelOption/SO_BACKLOG (int 128))))
+    (.childOption (:child_option options (ChannelOption/SO_KEEPALIVE true)))
+    (.handler (init-channel (:handlers options))))
+
+  (when-let [addr (:addr options)
+             port (:port options)
+             ^ChannelFuture f (.connect addr port)]
+    (println (str "connect to " addr port "success"))
     (.sync (.closeFuture (.channel f)))))
