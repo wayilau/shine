@@ -24,11 +24,11 @@
             channel (.channel ctx)
             pool (Executors/newFixedThreadPool 1)]
         (.submit pool ^Runnable (fn []
-                                  (def line (.nextLine scan))
-                                  (while (not-nil? line)
-                                    (do
-                                      (.writeAndFlush channel line)
-                                      (def line (.nextLine scan))))))))))
+                           (def line (.nextLine scan))
+                           (while (not-nil? line)
+                             (do
+                               (.writeAndFlush channel line)
+                               (def line (.nextLine scan))))))))))
 
 
 

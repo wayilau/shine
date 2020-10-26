@@ -5,8 +5,8 @@
     (io.netty.channel ChannelFuture ChannelOption ChannelPipeline ChannelInitializer ChannelHandler ChannelHandlerContext ChannelInboundHandlerAdapter)
     (io.netty.channel.nio NioEventLoopGroup)))
 
-(def boot (ServerBootstrap.))
-(def b (Bootstrap.))
+(def ^ServerBootstrap boot (ServerBootstrap.))
+(def ^Bootstrap b (Bootstrap.))
 
 (defn ^ChannelHandler new-handler
   "build handler from this func."
@@ -16,7 +16,8 @@
       (f ctx message))))
 
 (defn- ^ChannelInitializer init-channel
-  "give the pipeline to user,can modify the channelhandler at runtime."
+  "a func help user to add handler easily. not need use proxy every time.
+  handlers is a vector that contanins ChannelHandler."
   [handlers]
   (proxy [ChannelInitializer] []
     (initChannel [ch]

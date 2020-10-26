@@ -11,9 +11,14 @@
                  ["io.forward/yaml" "1.0.9"]
                  ["mysql/mysql-connector-java" "8.0.19"]
                  [ring "1.8.1"]
-                 [compojure "1.6.1"]]
+                 [ring/ring-defaults "0.3.2"]
+                 [compojure "1.6.1"]
+                 [com.qcloud/cos_api "5.6.24"]
+                 [liberator "0.15.1"]
+                 [com.google.code.gson/gson "2.8.6"]
+                 ]
   ;:main ^:skip-aot shine.core
   :target-path "target/%s"
   :plugins [[lein-ring "0.7.1"]]
-  :ring {:handler http.server/app}
+  :ring {:handler cos.http/app}
   :profiles {:uberjar {:aot :all}})
